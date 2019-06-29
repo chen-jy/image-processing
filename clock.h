@@ -29,4 +29,4 @@ private:
 	cudaEvent_t event_start, event_stop;
 };
 
-#endif
+#endif // H_CLOCK
