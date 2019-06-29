@@ -1,5 +1,5 @@
-#ifndef H_FILTER
-#define H_FILTER
+#ifndef H_FILTERS
+#define H_FILTERS
 
 #define NUM_SP_FILTERS 4
 
@@ -21,4 +21,4 @@ extern filter *filters[NUM_SP_FILTERS];
 
 extern filter_dp dp_filter;
 
-#endif
+#endif // H_FILTERS
