@@ -1,6 +1,11 @@
 #ifndef H_PNG_UTILS
 #define H_PNG_UTILS
 
+#include <png.h>
+#include <string>
+
+using namespace std;
+
 struct my_png {
 	int width, height;
 	png_byte color_type;
