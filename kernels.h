@@ -10,4 +10,7 @@
 __global__ void kernel1(my_png *input, my_png *output, filter *f);
 __global__ void kernel1n(my_png *output, int *minp, int *maxp);
 
+__global__ void kernel2(my_png *input, my_png *output, filter *f);
+__global__ void kernel2n(my_png *output, int *minp, int *maxp);
+
 #endif // H_KERNELS

@@ -36,8 +36,11 @@ __global__ void kernel1n(my_png *output, int *minp, int *maxp) {
 	for (int y = 0; y < output->height; y++) {
 		for (int x = 0; x < output->width; x++) {
 			png_bytep pix = output->pixels[y * output->width + x * 4];
-			for (int a = 0; a < 3; a++)
-				pix[a] = ((pix[a] - minp[a]) * 255) / (maxp[a] - minp[a]);
+
+			for (int a = 0; a < 3; a++) {
+				if (minp[a] != maxp[a])
+					pix[a] = ((pix[a] - minp[a]) * 255) / (maxp[a] - minp[a]);
+			}
 		}
 	}
 }
