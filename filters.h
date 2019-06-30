@@ -2,6 +2,11 @@
 #define H_FILTERS
 
 #define NUM_SP_FILTERS 4
+#define FSP_ID3 0
+#define FSP_EDGE3 1
+#define FSP_SHARP3 2
+#define FSP_LAPGAUS9 3
+#define FDP_BLUR5 4
 
 struct filter {
 	int dim;
