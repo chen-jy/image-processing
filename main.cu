@@ -34,6 +34,42 @@ void print_runtime(int kernel, int cpu_time_ser, int cpu_time_par, float transfe
 		(transfer_in + gpu_time + transfer_out));
 }
 
+void run_convolution(int kernel, my_png *input, my_png *output, filter *filter) {
+	int threads, blocks;
+	switch (kernel) {
+	case 1:
+		threads = blocks = 1;
+		break;
+	}
+
+	dim3 dimBlock(threads, 1, 1);
+	dim3 dimGrid(blocks, 1, 1);
+
+	switch (kernel) {
+	case 1:
+		kernel1<<<dimGrid, dimBlock>>>(input, output, filter);
+		break;
+	}
+}
+
+void run_normalization(int kernel, my_png *output, int *minp, int *maxp) {
+	int threads, blocks;
+	switch (kernel) {
+	case 1:
+		threads = blocks = 1;
+		break;
+	}
+
+	dim3 dimBlock(threads, 1, 1);
+	dim3 dimGrid(blocks, 1, 1);
+
+	switch (kernel) {
+	case 1:
+		kernel1n<<<dimGrid, dimBlock>>>(output, minp, maxp);
+		break;
+	}
+}
+
 void init() {
 	for (int i = 0; i < 25; i++)
 		dp_filter.matrix[i] *= (1.0 / 256.0);
@@ -88,6 +124,7 @@ int main(int argc, char *argv[]) {
 
 	my_png *gpu_input, *gpu_output;
 	filter *gpu_filter;
+	int *minp, *maxp;
 
 	cudaMalloc(&gpu_input, sizeof(my_png));
 	cudaMalloc(&(gpu_input->pixels), image_size);
@@ -95,6 +132,8 @@ int main(int argc, char *argv[]) {
 	cudaMalloc(&(gpu_output->pixels), image_size);
 	cudaMalloc(&gpu_filter, sizeof(filter));
 	cudaMalloc(&(gpu_filter->matrix), filter_size);
+	cudaMalloc(&minp, 3 * sizeof(int));
+	cudaMalloc(&maxp, 3 * sizeof(int));
 
 	for (int kernel = 0; kernel < NUM_KERNELS; kernel++) {
 		for (int i = 0; i < NUM_ITERATIONS; i++) {
@@ -114,7 +153,13 @@ int main(int argc, char *argv[]) {
 			time_in[kernel] += clock.stop();
 
 			clock.start();
-			kernel1<<<1, 1>>>(gpu_input, gpu_output, gpu_filter);
+			run_convolution(kernel + 1, gpu_input, gpu_output, gpu_filter);
+			time_gpu[kernel] += clock.stop();
+
+			// Find min and max here
+
+			clock.start();
+			run_normalization(kernel + 1, gpu_output, minp, maxp);
 			time_gpu[kernel] += clock.stop();
 
 			clock.start();
@@ -141,6 +186,8 @@ int main(int argc, char *argv[]) {
 	cudaFree(gpu_output);
 	cudaFree(gpu_filter->matrix);
 	cudaFree(gpu_filter);
+	cudaFree(minp);
+	cudaFree(maxp);
 
 	destroy_png(input_png);
 	destroy_png(output_png);
