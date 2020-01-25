@@ -1,3 +1,3 @@
-# image-processing
+# Image Processing Experiments
 
-Convolution experiments on a GPU
+This repo is currently an incomplete port of one of my private repos. I need to remove some proprietary code, and there is no estimated date of completion at this time.
